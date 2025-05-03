@@ -89,7 +89,7 @@ namespace HW43
                 buyer.ShowBasket();
                 Console.WriteLine();
 
-                RemoveExcess(buyer);
+                buyer.RemoveExcess();
 
                 Trade(buyer);
 
@@ -101,25 +101,11 @@ namespace HW43
             Console.WriteLine($"\nРабота завершена. Заработано денег: {_money}");
         }
 
-        private void RemoveExcess(Buyer buyer) //Я не знаю как по другому назвать метод (удалить лишнее??)
-        {
-            int total = buyer.GetBasketTotal();
-
-            while (total > buyer.Money)
-            {
-                Product removedProduct = buyer.RemoveRandomFromBasket();
-
-                Console.WriteLine($"Недостаточно денег. Клиент убрал товар из корзины: {removedProduct.Name}");
-
-                total = buyer.GetBasketTotal();
-            }
-        }
-
         private void Trade(Buyer buyer)
         {
             int basketTotal = buyer.GetBasketTotal();
 
-            if (buyer.CanPay(buyer.GetBasketTotal()) && buyer.GetBasketCount() > 0)
+            if (buyer.CanPay(buyer.GetBasketTotal()) && buyer.BasketCount > 0)
             {
                 buyer.Pay(basketTotal);
                 buyer.MoveBasketToBag();
@@ -151,6 +137,22 @@ namespace HW43
         }
 
         public int Money { get; private set; }
+        public int BasketCount => _basket.Count;
+      
+
+        public void RemoveExcess()
+        {
+            int total = GetBasketTotal();
+
+            while (total > Money)
+            {
+                Product removedProduct = RemoveRandomFromBasket();
+
+                Console.WriteLine($"Недостаточно денег. Клиент убрал товар из корзины: {removedProduct.Name}");
+
+                total = GetBasketTotal();
+            }
+        }
 
         public void AddToBasket(Product product)
         {
@@ -179,10 +181,6 @@ namespace HW43
             return total;
         }
 
-        public int GetBasketCount()
-        {
-            return _basket.Count;
-        }
 
         public Product RemoveRandomFromBasket()
         {
